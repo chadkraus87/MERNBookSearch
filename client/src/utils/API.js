@@ -17,6 +17,7 @@ export const createUser = async (userData) => {
       },
       body: JSON.stringify(userData),
     });
+    console.log('Response status:', response.status);
 
     if (!response.ok) {
       throw new Error('Network response unavailable');
@@ -30,6 +31,7 @@ export const createUser = async (userData) => {
     throw error;
   }
 };
+
 
 export const loginUser = (userData) => {
   return fetch('/api/users/login', {
