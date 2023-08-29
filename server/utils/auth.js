@@ -6,25 +6,24 @@ const expiration = '2h';
 
 module.exports = {
   // Middleware function for authenticating routes
-  authMiddleware: function (req, res, next) {
-    let token = req.query.token || req.headers.authorization;
+  authMiddleware: function ({ req }) {
+    let token = req.body.token || req.query.token || req.headers.authorization;
 
-    if (token && token.startsWith('Bearer ')) {
-      token = token.slice(7);
+    if (req.headers.authorization) {
+      token = token.split(' ').pop().trim();
     }
 
     if (!token) {
-      return res.status(400).json({ message: 'You have no token!' });
+      return req;
     }
 
     try {
       const { data } = jwt.verify(token, secret);
       req.user = data;
-      next();
     } catch (error) {
       console.error('Invalid token:', error.message);
-      return res.status(400).json({ message: 'Invalid token!' });
     }
+  return req;  
   },
   signToken: function ({ username, email, _id }) {
     const payload = { username, email, _id };
